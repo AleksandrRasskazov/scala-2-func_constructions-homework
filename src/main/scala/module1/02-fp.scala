@@ -16,80 +16,80 @@ object opt {
    * Реализовать тип Option, который будет указывать на присутствие либо отсутсвие результата
    */
 
-  sealed trait Option[+A]{
+  sealed trait Option[+A] {
+
+    import Option.{None, Some}
+
+    /**
+     *
+     * Реализовать метод isEmpty, который будет возвращать true если Option не пуст и false в противном случае
+     */
+
     def isEmpty: Boolean = this match {
-      case Option.Some(_) => false
-      case Option.None => true
+      case Some(_) => false
+      case None => true
     }
 
-    def get: A = this match {
-      case Option.Some(v) => v
-      case Option.None => throw new Exception("get on empty Option")
+    /**
+     *
+     * Реализовать метод get, который будет возвращать значение
+     */
+
+    def get[T]: T = this match {
+      case Some(v: T) => v
+      case None => throw new Exception("get on empty Option")
     }
 
-    def printIfAny(): Unit = {
-      this match {
-        case Option.Some(x) => println(x)
-        case _ => ()
-      }
+    /**
+     *
+     * Реализовать метод printIfAny, который будет печатать значение, если оно есть
+     */
+
+    def printIfAny(): Unit = this match {
+      case Some(v: A) => println(v)
+      case _ => ()
     }
 
-    def orElse[B] (x: Option[B]): Option[Any] = {
-      this match {
-        case Option.None => x[B]
-        case Option.Some(_) => this
-      }
+    /**
+     *
+     * реализовать метод orElse который будет возвращать другой Option, если данный пустой
+     */
+
+//    def orElse2[T](x: T) = this match {
+//      case Some(v: T) => v
+//      case None => x
+//    }
+
+      def orElse[T](x: Option[T]): Option[T] =
+        if (isEmpty) x: Option[T] else this.get
+
+
+    /**
+     *
+     * Реализовать метод zip, который будет создавать Option от пары значений из 2-х Option
+     */
+
+    def zip[T](x: Option[T]): Option[(T, T)] = {
+      case None => None
+      case Some(_) => Some(this.get, x.get)
     }
 
-    def zip[A, B](a: Option[A]): scala.Option[(Any, Any)] = Some(this.get, a.get)
-
-    def filter(f: A => Boolean ): Any = if (!isEmpty || f(this.get)) this
-
+    /**
+     *
+     * Реализовать метод filter, который будет возвращать не пустой Option
+     * в случае если исходный не пуст и предикат от значения = true
+     */
+    def filter(f: A => Boolean ): Option[A] = if (!isEmpty || f(this.get)) this.get else None
 
 
   }
+
 
   object Option {
     case class Some[A](v: A) extends Option[A]
     case object None extends Option[Nothing]
   }
 
-
-
-
-  /**
-   *
-   * Реализовать метод printIfAny, который будет печатать значение, если оно есть
-   */
-
-  /**
-   *
-   * реализовать метод orElse который будет возвращать другой Option, если данный пустой
-   */
-
-
-  /**
-   *
-   * Реализовать метод isEmpty, который будет возвращать true если Option не пуст и false в противном случае
-   */
-
-
-  /**
-   *
-   * Реализовать метод get, который будет возвращать значение
-   */
-
-  /**
-   *
-   * Реализовать метод zip, который будет создавать Option от пары значений из 2-х Option
-   */
-
-
-  /**
-   *
-   * Реализовать метод filter, который будет возвращать не пустой Option
-   * в случае если исходный не пуст и предикат от значения = true
-   */
 
 }
 
@@ -132,13 +132,25 @@ object list {
    * Реализовать односвязанный имутабельный список List
    */
 
-  sealed trait List[+A]{
+  sealed trait List[+A] {
+    import List._
+
+    /**
+     *
+     * Реализовать метод конс :: который позволит добавлять элемент в голову списка
+     */
+
     def ::[AA >: A](head: AA): List[AA] = Cons(head, this)
+
+    /**
+     *
+     * Реализовать метод mkString который позволит красиво представить список в виде строки
+     */
+
 
     def mkString: String = mkString(", ")
 
     def mkString(sep: String): String = {
-      import List._
 
       def loop(l: List[A], acc: StringBuilder): StringBuilder = l match {
         case List.Nil => acc
@@ -148,12 +160,9 @@ object list {
       loop(this, new StringBuilder()).toString()
     }
 
-    def incList(l: List[Int]): List[Int]= l.map(x => x +1)
-
-    def shoutString(l: List[String]): List[String] = l.map ( x=> '!' + x)
 
 
-    def map[B](f: A => B): List[B] = ???
+//    def map[B](f: A => B): List[B] = mapList
   }
 
   object List{
@@ -170,12 +179,7 @@ object list {
 
   }
 
-  //   val list = 1 :: List.Nil
 
-  /**
-   *
-   * Реализовать метод конс :: который позволит добавлять элемент в голову списка
-   */
 
 
   /**
@@ -184,10 +188,6 @@ object list {
    */
 
 
-  /**
-   *
-   * Реализовать метод mkString который позволит красиво представить список в виде строки
-   */
 
 
   /**
@@ -218,3 +218,4 @@ object list {
 
 
 }
+
